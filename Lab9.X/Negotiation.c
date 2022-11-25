@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Negotiation.h"
+#include "BOARD.h"
 
 
 NegotiationData NegotiationHash(NegotiationData secret){
-    NegotiationData square = secret * secret;
-    return square % PUBLIC_KEY;
+    uint64_t square = secret * secret;
+    NegotiationData result = square % PUBLIC_KEY;
+    return result;
 }
 
 int NegotiationVerify(NegotiationData secret, NegotiationData commitment){
@@ -20,8 +22,21 @@ int NegotiationVerify(NegotiationData secret, NegotiationData commitment){
 
 NegotiationOutcome NegotiateCoinFlip(NegotiationData A, NegotiationData B){ // Finding a parity of 
     NegotiationData xored = A ^ B;
-    int i, counter;
-    uint16_t bitPosition = 0001;
+    xored = xored^(xored>>1);
+    xored = xored^(xored>>2);
+    xored = xored^(xored>>4);
+    xored = xored^(xored>>8);
+    
+    if(xored & 1 == 1){
+        return HEADS;
+    }
+    else{
+        return TAILS;
+    }
+}
+
+/*int i, counter;
+    static uint16_t bitPosition = 0001;
     for(i = 0; i < 16; i++){
         if(xored & bitPosition){
             counter++;
@@ -29,9 +44,7 @@ NegotiationOutcome NegotiateCoinFlip(NegotiationData A, NegotiationData B){ // F
         bitPosition << 1;
     }
     if(counter % 2 == 0){
-        NegotiationOutcome = TAILS;
+        return TAILS;
     }
     else{
-        NegotiationOutcome = HEADS;
-    }
-}
+        return HEADS;*/
