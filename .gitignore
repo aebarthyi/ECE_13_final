@@ -50,10 +50,12 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
+*.xml
+.generated_files/
 html/
 nbproject/private/
 nbproject/Package-*.bash
+nbproject/
 build/
 nbbuild/
 dist/
