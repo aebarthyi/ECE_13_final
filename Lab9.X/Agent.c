@@ -1,12 +1,12 @@
 #include "Agent.h"
 
 
-typedef struct Agent{
+typedef struct Agent{ //agent struct to track state of the agent
     AgentState state;
     int turnCounter;
 };
 
-static Agent agentState;
+static Agent agentState; //static module level struct to hold persistent data
 
 /**
  * The Init() function for an Agent sets up everything necessary for an agent before the game
@@ -37,25 +37,65 @@ void AgentInit(void){
 Message AgentRun(BB_Event event){
     switch(agentState.state){
         case AGENT_STATE_START:{
-            
+            if(event.type == BB_EVENT_START_BUTTON){
+                agentState.state = AGENT_STATE_CHALLENGING;
+                //initialize fields
+                //send CHA
+                //place boats
+                
+            }
+            else if(event.type == BB_EVENT_CHA_RECEIVED)
+                agentState.state = AGENT_STATE_ACCEPTING;
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            //DO other things here like generate the message
+            break;
         }
         case AGENT_STATE_CHALLENGING:{
-            
+            if(event.type == BB_EVENT_ACC_RECEIVED){
+                //SEND REV
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            break;
         }
         case AGENT_STATE_ACCEPTING:{
-            
+            if(event.type == BB_EVENT_REV_RECEIVED){
+                //stuff here
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            break;
         }
         case AGENT_STATE_ATTACKING:{
-            
+            if(event.type == BB_EVENT_RES_RECEIVED){
+                //check if something happened 
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            break;
         }
         case AGENT_STATE_DEFENDING:{
-            
+            if(event.type == BB_EVENT_SHO_RECEIVED){
+                //check something then go to waiting to sent
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            break;
         }
         case AGENT_STATE_WAITING_TO_SEND:{
-            
+            if(event.type == BB_EVENT_MESSAGE_SENT){
+                agentState.state = AGENT_STATE_ATTACKING;
+                agentState.turnCounter++;
+                //decide guess
+                //send SHO
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON)
+                agentState.state = AGENT_STATE_START;
+            break;
         }
         case AGENT_STATE_END_SCREEN:{
-            
+            break;
         }
     }
 }

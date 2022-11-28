@@ -1,5 +1,22 @@
 #include "Message.h"
 
+#define START_DELIMITER '$'
+#define CHECKSUM_DELIMITER '*'
+#define END_DELIMITER '\n'
+
+typedef enum DecodeState{
+    DECODE_WAIT_FOR_START,
+    DECODE_RECORDING_PAYLOAD,
+    DECODE_RECORDING_CHECKSUM
+};
+
+typedef struct DecodeStatus{
+    DecodeState decodeState;
+    char checksum_string[82];
+    int messageIndex;
+};
+
+static DecodeStatus decodeStatus = {DECODE_WAIT_FOR_START, {0}, 0};
 /**
  * Given a payload string, calculate its checksum
  * 
@@ -78,5 +95,38 @@ int Message_Encode(char *message_string, Message message_to_encode){
  * note that ANY call to Message_Decode may modify decoded_message.
  */
 int Message_Decode(unsigned char char_in, BB_Event * decoded_message_event){
+    while(decoded_message_event.type != BB_EVENT_ERROR){
+        switch(decodeStatus.decodeState){
+            case DECODE_WAIT_FOR_START: {
+                if(char_in == START_DELIMITER)
+                    decodeStatus.decodeState = DECODE_RECORDING_PAYLOAD;
+                break;
+            }
+            case DECODE_RECORDING_PAYLOAD:{
+                if(char_in == CHECKSUM_DELIMITER)
+                    decodeStatus.decodeState = DECODE_RECORDING_CHECKSUM;
+                else{
+                    //check for stuff to return errors
+                    decodeStatus.checksum_string[decodeStatus.messageIndex++] = char_in;
+                }
+          
+                break;
+            }
+            case DECODE_RECORDING_CHECKSUM:{
+                if(char_in == END_DELIMITER){
+                    //do stuff here
+                }
+                else{
+                    //only record HEX CHARs
+                }
+                    
+                break;
+            }
+        }
+    }
     
+    
+    
+    
+    return SUCCESS;
 }
