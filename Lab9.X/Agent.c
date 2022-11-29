@@ -1,10 +1,10 @@
 #include "Agent.h"
 
 
-typedef struct Agent{ //agent struct to track state of the agent
+typedef struct { //agent struct to track state of the agent
     AgentState state;
     int turnCounter;
-};
+}Agent;
 
 static Agent agentState; //static module level struct to hold persistent data
 
