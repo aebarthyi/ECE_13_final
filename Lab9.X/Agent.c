@@ -1,9 +1,12 @@
 #include "Agent.h"
+#include "Field.h"
 
 
 typedef struct { //agent struct to track state of the agent
     AgentState state;
     int turnCounter;
+    Field *myField;
+    Field *oppField;
 }Agent;
 
 static Agent agentState; //static module level struct to hold persistent data
@@ -39,7 +42,7 @@ Message AgentRun(BB_Event event){
         case AGENT_STATE_START:{
             if(event.type == BB_EVENT_START_BUTTON){
                 agentState.state = AGENT_STATE_CHALLENGING;
-                //initialize fields
+                FieldInit(agentState.myField, agentState.oppField);
                 //send CHA
                 //place boats
                 

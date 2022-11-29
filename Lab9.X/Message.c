@@ -16,7 +16,15 @@ typedef enum {
     DECODE_RECORDING_CHECKSUM
 }DecodeState;
 
-static DecodeState decodeStatus = DECODE_WAIT_FOR_START;
+typedef struct{
+    DecodeState decodeState;
+    char payload[MESSAGE_MAX_PAYLOAD_LEN];
+    char checksum[MESSAGE_CHECKSUM_LEN];
+    int payloadLength;
+    int checksumLength;
+} DecodeStatus;
+
+static DecodeStatus decodeStatus = {DECODE_WAIT_FOR_START, {0}, {0}, 0, 0};
 /**
  * Given a payload string, calculate its checksum
  * 
@@ -110,7 +118,42 @@ int Message_ParseMessage(const char* payload,
                              Return 0 if message type is MESSAGE_NONE.
  */
 int Message_Encode(char *message_string, Message message_to_encode){
-    
+    int messageIndex = 0;
+    message_string[messageIndex++] = START_DELIMITER;
+    char payload[MESSAGE_MAX_PAYLOAD_LEN] = {0};
+    char checksum[MESSAGE_CHECKSUM_LEN] = {0};
+    switch(message_to_encode.type){
+        case MESSAGE_CHA:{
+            sprintf(payload, PAYLOAD_TEMPLATE_CHA, message_to_encode.param0);
+            break;
+        }
+        case MESSAGE_ACC:{
+            sprintf(payload, PAYLOAD_TEMPLATE_ACC, message_to_encode.param0);
+            break;
+        }
+        case MESSAGE_REV:{
+            sprintf(payload, PAYLOAD_TEMPLATE_REV, message_to_encode.param0);
+            break;
+        }
+        case MESSAGE_SHO:{
+            sprintf(payload, PAYLOAD_TEMPLATE_SHO, message_to_encode.param0, message_to_encode.param1);
+            break;
+        }
+        case MESSAGE_RES:{
+            sprintf(payload, PAYLOAD_TEMPLATE_RES, message_to_encode.param0, message_to_encode.param1, message_to_encode.param2);
+            break;
+        }
+        case MESSAGE_NONE:{
+            return 0;
+        }
+    }
+    strcat(message_string, payload);
+    messageIndex = strlen(message_string);
+    message_string[messageIndex] = '*';
+    sprintf(checksum, "%x", Message_CalculateChecksum(payload));
+    strncat(message_string, checksum, strlen(checksum));
+    strcat(message_string, "\n");
+    return strnlen(message_string, MESSAGE_MAX_LEN);
 }
 
 /**
@@ -132,58 +175,58 @@ int Message_Encode(char *message_string, Message message_to_encode){
  * note that ANY call to Message_Decode may modify decoded_message.
  */
 int Message_Decode(unsigned char char_in, BB_Event * decoded_message_event){
-    int checksumLength = 0;
-    int payloadLength = 0;
-    char payload[MESSAGE_MAX_PAYLOAD_LEN] = {0};
-    char checksum_string[MESSAGE_CHECKSUM_LEN + 1] = {0};
-    while(decoded_message_event->type != BB_EVENT_ERROR){
-        switch(decodeStatus){
-            case DECODE_WAIT_FOR_START: {
-                if(char_in == START_DELIMITER)
-                    decodeStatus = DECODE_RECORDING_PAYLOAD;
-                else{
+    switch(decodeStatus.decodeState){
+        case DECODE_WAIT_FOR_START: {
+            if(char_in == START_DELIMITER){
+                decodeStatus.decodeState = DECODE_RECORDING_PAYLOAD;
+                memset(decodeStatus.payload, 0, MESSAGE_MAX_PAYLOAD_LEN);
+                decodeStatus.payloadLength = 0;
+                decodeStatus.checksumLength = 0;
+            }
+            else{
+                decoded_message_event->type = BB_EVENT_ERROR;
+                return STANDARD_ERROR;
+            }
+            break;
+        }
+        case DECODE_RECORDING_PAYLOAD:{
+            if(char_in == CHECKSUM_DELIMITER){
+                decodeStatus.decodeState = DECODE_RECORDING_CHECKSUM;
+            }
+            else if(char_in == START_DELIMITER || char_in == END_DELIMITER){
+                decoded_message_event->type = BB_EVENT_ERROR;
+                return STANDARD_ERROR;
+            }
+            else{
+                //check for stuff to return errors
+                decodeStatus.payload[decodeStatus.payloadLength++] = char_in;
+                if(decodeStatus.payloadLength > MESSAGE_MAX_PAYLOAD_LEN){
                     decoded_message_event->type = BB_EVENT_ERROR;
                     return STANDARD_ERROR;
                 }
-                break;
             }
-            case DECODE_RECORDING_PAYLOAD:{
-                if(char_in == CHECKSUM_DELIMITER){
-                    decodeStatus = DECODE_RECORDING_CHECKSUM;
-                }
-                else if(char_in == START_DELIMITER || char_in == END_DELIMITER){
+        
+            break;
+        }
+        case DECODE_RECORDING_CHECKSUM:{
+            if(char_in == END_DELIMITER){
+                printf("PAYLOAD: %s\n CHECKSUM: %s\n", decodeStatus.payload, decodeStatus.checksum);
+                return Message_ParseMessage(decodeStatus.payload, decodeStatus.checksum, decoded_message_event);
+            }
+            else if((char_in > 47 && char_in < 58) || (char_in > 64 && char_in < 71)){
+                //only record HEX CHARs
+                decodeStatus.checksum[decodeStatus.checksumLength++] = char_in;
+                if(decodeStatus.checksumLength > MESSAGE_CHECKSUM_LEN){
                     decoded_message_event->type = BB_EVENT_ERROR;
                     return STANDARD_ERROR;
                 }
-                else{
-                    //check for stuff to return errors
-                    payload[payloadLength++] = char_in;
-                    if(payloadLength > MESSAGE_MAX_PAYLOAD_LEN){
-                        decoded_message_event->type = BB_EVENT_ERROR;
-                        return STANDARD_ERROR;
-                    }
-                }
-          
-                break;
             }
-            case DECODE_RECORDING_CHECKSUM:{
-                if(char_in == END_DELIMITER){
-                    return Message_ParseMessage(payload, checksum_string, decoded_message_event);
-                }
-                else if((char_in > 47 && char_in < 58) || (char_in > 64 && char_in < 71)){
-                    //only record HEX CHARs
-                    checksum_string[checksumLength++] = char_in;
-                    if(checksumLength > MESSAGE_CHECKSUM_LEN){
-                        decoded_message_event->type = BB_EVENT_ERROR;
-                        return STANDARD_ERROR;
-                    }
-                }
-                else{
-                    decoded_message_event->type = BB_EVENT_ERROR;
-                    return STANDARD_ERROR;
-                }
-                break;
+            else{
+                decoded_message_event->type = BB_EVENT_ERROR;
+                return STANDARD_ERROR;
             }
+            break;
         }
     }
+    return SUCCESS;
 }
