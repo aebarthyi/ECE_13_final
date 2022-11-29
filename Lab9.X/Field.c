@@ -4,49 +4,102 @@
 #include "Field.h"
 #include "BOARD.h"
 
-
-
-void FieldPrintHelper(Field *field, char line, int i, int j){
-    switch(FieldGetSquareStatus(field, i, j)){
+void FieldPrint_Helper(Field *field, int currentRow);
+void FieldPrint_Helper(Field *field, int currentRow){
+    int initial;
+    for(initial = 0; initial < FIELD_COLS; initial++){
+        switch(FieldGetSquareStatus(field, currentRow, initial)){
             case FIELD_SQUARE_EMPTY:
-            sprintf(line, "%s", ".");
-            break;
-            case FIELD_SQUARE_HUGE_BOAT:
-                sprintf(line,"%i", FIELD_BOAT_SIZE_HUGE);
-                break;
-            case FIELD_SQUARE_LARGE_BOAT:
-                sprintf(line,"%i", FIELD_BOAT_SIZE_LARGE);
-                break;
-            case FIELD_SQUARE_MEDIUM_BOAT:
-                sprintf(line,"%i", FIELD_BOAT_SIZE_MEDIUM);
+                printf(" .");
                 break;
             case FIELD_SQUARE_SMALL_BOAT:
-                sprintf(line,"%i", FIELD_BOAT_SIZE_SMALL);
+                printf(" 3");
+                break;
+            case FIELD_SQUARE_MEDIUM_BOAT:
+                printf(" 4");
+                break;
+            case FIELD_SQUARE_LARGE_BOAT:
+                printf(" 5");
+                break;
+            case FIELD_SQUARE_HUGE_BOAT:
+                printf(" 6");
                 break;
             case FIELD_SQUARE_HIT:
-                sprintf(line,"%s", "X" );
+                printf(" X");
                 break;
             case FIELD_SQUARE_MISS:
-                sprintf(line, "%s", "O");
-                break;    
+                printf(" O");
+                break;
+            default:
+                printf(" .");
         }
+    }
 }
 
 
 void FieldPrint_UART(Field *own_field, Field * opp_field){
-    /*
-    char line1[500], line2[500], line3[500], line4[500], line5[500], line6[500];
+    
     int initial;
-    for(initial = 0; initial < 10; initial++){
-        FieldPrintHelper(own_field, line1, 0, initial);
-        FieldPrintHelper(own_field, line1, 1, initial);
-        FieldPrintHelper(own_field, line1, 2, initial);
-        FieldPrintHelper(own_field, line1, 3, initial);
-        FieldPrintHelper(own_field, line1, 4, initial);
-        FieldPrintHelper(own_field, line1, 5, initial);      
-        }
-    */
-    printf("     0 1 2 3 4 5 6 7 8 9\n    ---------------------");
+    int currentRow = 0;
+    printf("Your own Field:\n    0 1 2 3 4 5 6 7 8 9\n    ---------------------\n");
+    printf(" 0[");
+    FieldPrint_Helper(own_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 1[");
+    FieldPrint_Helper(own_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 2[");
+    FieldPrint_Helper(own_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 3[");
+    FieldPrint_Helper(own_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 4[");
+    FieldPrint_Helper(own_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 5[");
+    FieldPrint_Helper(own_field, currentRow);
+    printf(" ]\n\n\nOpponent's Field:\n");
+    currentRow = 0;
+    
+    printf("    0 1 2 3 4 5 6 7 8 9\n    ---------------------\n");
+    printf(" 0[");
+    FieldPrint_Helper(opp_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 1[");
+    FieldPrint_Helper(opp_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 2[");
+    FieldPrint_Helper(opp_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 3[");
+    FieldPrint_Helper(opp_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 4[");
+    FieldPrint_Helper(opp_field, currentRow);
+    currentRow++;
+    printf(" ]\n");
+    printf(" 5[");
+    FieldPrint_Helper(opp_field, currentRow);
+    printf(" ]\n");
+    
+    
+    
+    
+    
+        
+    
+    
+   
 
 }
 

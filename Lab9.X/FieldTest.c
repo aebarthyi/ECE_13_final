@@ -14,6 +14,9 @@ int main(void){
     myField = &field1;
     oponentField = &field2;
     FieldInit(myField, oponentField);
+    
+    FieldPrint_UART(myField, oponentField);
+    
     printf("Testing out FieldInit().\n");
     if(oponentField->hugeBoatLives == FIELD_BOAT_SIZE_HUGE && \
             oponentField->largeBoatLives == FIELD_BOAT_SIZE_LARGE &&\
@@ -157,6 +160,8 @@ int main(void){
     else{
         printf("Test Failed.\n");
     }
+    FieldPrint_UART(myField, oponentField);
+     
     
     
     
