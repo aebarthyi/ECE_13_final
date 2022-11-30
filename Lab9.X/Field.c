@@ -6,7 +6,7 @@
 #include "BOARD.h"
 
 
-#define 1 MAX_BOAT_ON_FIELD
+//#define MAX_BOAT_ON_FIELD 1
 
 void FieldPrint_Helper(Field *field, int currentRow);
 void FieldPrint_Helper(Field *field, int currentRow){
