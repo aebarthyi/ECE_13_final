@@ -6,7 +6,7 @@
 #include "BOARD.h"
 
 
-//#define MAX_BOAT_ON_FIELD 1
+#define 1 MAX_BOAT_ON_FIELD
 
 void FieldPrint_Helper(Field *field, int currentRow);
 void FieldPrint_Helper(Field *field, int currentRow){
@@ -302,31 +302,67 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
     srand(time(NULL));
     int randomGen, randomRow, randomCol;
     BoatType currentBoatType;
-    BoatDirection currentBoatDir = FIELD_DIR_EAST;
+    BoatSize currentBoatSize;
     randomGen = rand();
     randomGen &= (0x03);
     while(smallBoat + mediumBoat + largeBoat + hugeBoat > 0){
         if(randomGen == sBoat & smallBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_SMALL;
+            currentBoatSize = FIELD_BOAT_SIZE_SMALL;
             smallBoat = 0;
         }
         else if(randomGen == mBoat & mediumBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_MEDIUM;
+            currentBoatSize = FIELD_BOAT_SIZE_MEDIUM;
             mediumBoat = 0;
         }
         else if(randomGen == lBoat & largeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_LARGE;
+            currentBoatSize = FIELD_BOAT_SIZE_LARGE;
             largeBoat = 0;
         }
         else if(randomGen == hBoat & hugeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_HUGE;
+            currentBoatSize = FIELD_BOAT_SIZE_HUGE;
             hugeBoat = 0;
         }
         while(1){
             randomRow = rand() % 5;
             randomCol = rand() % 9;
-            if(FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType) + FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType) == 0){
+            uint8_t southAvail;
+            uint8_t eastAvail;
+            if(randomRow + currentBoatSize < FIELD_ROWS){
+                southAvail = TRUE;
+            }
+            else{
+                southAvail = FALSE;
+            }
+            if(randomCol + currentBoatSize < FIELD_COLS){
+                eastAvail = TRUE;
+            }
+            else{
+                eastAvail = FALSE;
+            }
+            
+            if(southAvail == FALSE && eastAvail == FALSE){
               continue;  
+            }
+            else if(southAvail == TRUE && eastAvail == FALSE){
+                FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
+                break;
+            }
+            else if(southAvail == FALSE && eastAvail == TRUE){
+                FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType);
+                break;
+            }
+            else{
+                if(rand() ^ (0x01) == 0x01){
+                    FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
+                }
+                else{
+                    FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType);
+                }
+                break;
             }
             
         }
@@ -335,8 +371,7 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
     }
     
     
-    BoatDirection currentDir = FIELD_DIR_EAST;
-    BoatType currentBoat;
+  
         
    
     
