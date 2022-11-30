@@ -39,6 +39,7 @@
       <itemPath>Agent.c</itemPath>
       <itemPath>Message.c</itemPath>
       <itemPath>messageTest.c</itemPath>
+      <itemPath>agentTest.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

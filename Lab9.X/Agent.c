@@ -61,7 +61,7 @@ Message AgentRun(BB_Event event){
                 message.type = MESSAGE_CHA;
                 message.param0 = agentState.hash_a;
                 Message_Encode(messageString, message);
-               
+                
                 //place boats
                 Uart1WriteData(messageString, strlen(messageString));
             }
