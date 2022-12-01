@@ -6,6 +6,9 @@
 #include "BOARD.h"
 
 
+
+
+
 #define MAX_BOAT_ON_FIELD 1
 
 void FieldPrint_Helper(Field *field, int currentRow);
@@ -298,37 +301,36 @@ uint8_t FieldGetBoatStates(const Field *f){
 }
 
 uint8_t FieldAIPlaceAllBoats(Field *own_field){
-    int smallBoat = 1, sBoat = 1, mediumBoat = 1, mBoat = 2, largeBoat = 1, lBoat = 3, hugeBoat = 1, hBoat = 4;
-    srand(time(NULL));
+    int smallBoat = 1, sBoat = 0, mediumBoat = 1, mBoat = 1, largeBoat = 1, lBoat = 2, hugeBoat = 1, hBoat = 3;
     int randomGen, randomRow, randomCol;
     BoatType currentBoatType;
     BoatSize currentBoatSize;
-    randomGen = rand();
-    randomGen &= (0x03);
+    srand(5);
+   
     while(smallBoat + mediumBoat + largeBoat + hugeBoat > 0){
-        if(randomGen == sBoat && smallBoat != 0){
+        if((rand() % 4) == sBoat && smallBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_SMALL;
             currentBoatSize = FIELD_BOAT_SIZE_SMALL;
             smallBoat = 0;
         }
-        else if(randomGen == mBoat && mediumBoat != 0){
+        else if((rand() % 4) == mBoat && mediumBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_MEDIUM;
             currentBoatSize = FIELD_BOAT_SIZE_MEDIUM;
             mediumBoat = 0;
         }
-        else if(randomGen == lBoat && largeBoat != 0){
+        else if((rand() % 4) == lBoat && largeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_LARGE;
             currentBoatSize = FIELD_BOAT_SIZE_LARGE;
             largeBoat = 0;
         }
-        else if(randomGen == hBoat && hugeBoat != 0){
+        else if((rand() % 4) == hBoat && hugeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_HUGE;
             currentBoatSize = FIELD_BOAT_SIZE_HUGE;
             hugeBoat = 0;
         }
         while(1){
-            randomRow = rand() % 5;
-            randomCol = rand() % 9;
+            randomRow = rand() % 6;
+            randomCol = rand() % 10;
             uint8_t southAvail;
             uint8_t eastAvail;
             if(randomRow + currentBoatSize < FIELD_ROWS){
@@ -355,8 +357,8 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
                 FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType);
                 break;
             }
-            else{
-                if((rand() ^ (0x01)) == 0x01){
+            else if(southAvail == TRUE && eastAvail == TRUE){
+                if((rand() & (0x01)) == 1){
                     FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
                 }
                 else{
@@ -369,6 +371,8 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
    
     
     }
+     
+     
 }
     
   

@@ -48,7 +48,7 @@ void AgentInit(void){
  */
 Message AgentRun(BB_Event event){
     Message message = {MESSAGE_NONE, 0, 0, 0}; //message to be returned
-    char * messageString;
+    char messageString[MESSAGE_MAX_LEN] = {0};
     switch(agentState.state){
         case AGENT_STATE_START:{
             if(event.type == BB_EVENT_START_BUTTON){

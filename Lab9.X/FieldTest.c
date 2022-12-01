@@ -163,6 +163,17 @@ int main(void){
     }
    
     FieldPrint_UART(myField, oponentField);
+    
+    FieldInit(myField, oponentField);
+    FieldAIPlaceAllBoats(myField);
+    FieldPrint_UART(myField, oponentField);
+   
+    printf("%u", myField->smallBoatLives);
+    
+   
+    
+    
+    
      
     
     
