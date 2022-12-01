@@ -145,21 +145,23 @@ int main(void){
     printf("Testing out FieldGetBoatStates().\n");
  
     uint8_t boatStatus = FieldGetBoatStates(myField);
-    if(boatStatus ^ (0x0F) == (0x09)){
-        printf("Test Passed.\n");
-    }
-    else{
-        printf("%u", boatStatus);
-    }
-    
-    FieldAddBoat(myField, 0, 9, FIELD_DIR_SOUTH, FIELD_BOAT_TYPE_MEDIUM);
-    uint8_t boatStatus2 = FieldGetBoatStates(myField);
-    if(boatStatus ^ (0x0F) == (0x0B)){
+    if(boatStatus == (0x09)){
         printf("Test Passed.\n");
     }
     else{
         printf("Test Failed.\n");
     }
+    
+    FieldAddBoat(myField, 0, 9, FIELD_DIR_SOUTH, FIELD_BOAT_TYPE_MEDIUM);
+    uint8_t boatStatus2 = FieldGetBoatStates(myField);
+    if(boatStatus2  == (0x0B)){
+        printf("Test Passed.\n");
+    }
+    else{
+        printf("Test Failed.\n");
+        
+    }
+   
     FieldPrint_UART(myField, oponentField);
      
     

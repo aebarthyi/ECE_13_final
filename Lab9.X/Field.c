@@ -6,7 +6,7 @@
 #include "BOARD.h"
 
 
-#define 1 MAX_BOAT_ON_FIELD
+#define MAX_BOAT_ON_FIELD 1
 
 void FieldPrint_Helper(Field *field, int currentRow);
 void FieldPrint_Helper(Field *field, int currentRow){
@@ -43,7 +43,7 @@ void FieldPrint_Helper(Field *field, int currentRow){
 
 void FieldPrint_UART(Field *own_field, Field * opp_field){
     
-    int initial;
+    
     int currentRow = 0;
     printf("Your own Field:\n    0 1 2 3 4 5 6 7 8 9\n    ---------------------\n");
     printf(" 0[");
@@ -146,7 +146,7 @@ SquareStatus FieldSetSquareStatus(Field *f, uint8_t row, uint8_t col, SquareStat
 uint8_t FieldAddBoat(Field *own_field, uint8_t row, uint8_t col, BoatDirection dir, BoatType boat_type){
     int addBoatSize;
     SquareStatus currentStatus;
-    if(row < FIELD_ROWS && row > 0 && col < FIELD_COLS && col >= 0){ 
+    if(row < FIELD_ROWS && row >= 0 && col < FIELD_COLS && col >= 0){ 
         switch(boat_type){
             case FIELD_BOAT_TYPE_SMALL:
                 addBoatSize = FIELD_BOAT_SIZE_SMALL - 1;
@@ -306,22 +306,22 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
     randomGen = rand();
     randomGen &= (0x03);
     while(smallBoat + mediumBoat + largeBoat + hugeBoat > 0){
-        if(randomGen == sBoat & smallBoat != 0){
+        if(randomGen == sBoat && smallBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_SMALL;
             currentBoatSize = FIELD_BOAT_SIZE_SMALL;
             smallBoat = 0;
         }
-        else if(randomGen == mBoat & mediumBoat != 0){
+        else if(randomGen == mBoat && mediumBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_MEDIUM;
             currentBoatSize = FIELD_BOAT_SIZE_MEDIUM;
             mediumBoat = 0;
         }
-        else if(randomGen == lBoat & largeBoat != 0){
+        else if(randomGen == lBoat && largeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_LARGE;
             currentBoatSize = FIELD_BOAT_SIZE_LARGE;
             largeBoat = 0;
         }
-        else if(randomGen == hBoat & hugeBoat != 0){
+        else if(randomGen == hBoat && hugeBoat != 0){
             currentBoatType = FIELD_BOAT_TYPE_HUGE;
             currentBoatSize = FIELD_BOAT_SIZE_HUGE;
             hugeBoat = 0;
@@ -356,7 +356,7 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
                 break;
             }
             else{
-                if(rand() ^ (0x01) == 0x01){
+                if((rand() ^ (0x01)) == 0x01){
                     FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
                 }
                 else{
@@ -369,64 +369,9 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
    
     
     }
-    
+}
     
   
         
    
-    
-    /*
-        for(i = 0; i < FIELD_ROWS; i++){
-            for(j = 0; j < FIELD_COLS; j++){
-                currentDir = FIELD_DIR_EAST;
-                goto mid;
-                mid:
-                    if(FieldAddBoat(own_field, i, j, currentDir, currentBoat) != STANDARD_ERROR){
-                        FieldAddBoat(own_field, i, j, currentDir, currentBoat);
-                        goto intermediary;
-                    }
-                    else{
-                        if(currentDir == FIELD_DIR_EAST){
-                            currentDir = FIELD_DIR_SOUTH;
-                            goto mid;
-                        }
-                        else{
-                            continue;
-                        }
-                    }
-            }   
-        }
-    goto decision;
-         
-    intermediary:
-        if(currentBoat == FIELD_BOAT_TYPE_HUGE){
-            hugeBoat = FALSE;
-        }
-        else if(currentBoat == FIELD_BOAT_TYPE_LARGE){
-            largeBoat = FALSE;
-        }
-        else if(currentBoat == FIELD_BOAT_TYPE_MEDIUM){
-            mediumBoat = FALSE;
-        }
-        else{
-            smallBoat = FALSE;
-            goto decision;
-        }
-        currentDir = FIELD_DIR_EAST;
-        goto start;
-    
-    decision:
-        if(smallBoat == TRUE | mediumBoat == TRUE | largeBoat == TRUE | hugeBoat == TRUE){
-            return STANDARD_ERROR;
-        }
-        else{
-            return SUCCESS;
-        }
-    
-    
-        */
-    
-
-   
-    
-}
+  

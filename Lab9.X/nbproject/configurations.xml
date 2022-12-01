@@ -40,6 +40,7 @@
       <itemPath>Message.c</itemPath>
       <itemPath>messageTest.c</itemPath>
       <itemPath>agentTest.c</itemPath>
+      <itemPath>FieldTest.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -1401,6 +1402,10 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
+      <item path="agentTest.c" ex="true" overriding="false">
+      </item>
+      <item path="messageTest.c" ex="true" overriding="false">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
