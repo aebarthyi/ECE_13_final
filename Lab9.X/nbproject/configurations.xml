@@ -426,6 +426,8 @@
         <property key="stack-smashing" value=""/>
         <property key="wpo-lto" value="false"/>
       </C32Global>
+      <item path="FieldTest.c" ex="true" overriding="false">
+      </item>
       <item path="Lab09_main.c" ex="true" overriding="false">
         <C32>
         </C32>
@@ -1402,8 +1404,6 @@
                   value=""/>
         <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
       </Tool>
-      <item path="agentTest.c" ex="true" overriding="false">
-      </item>
       <item path="messageTest.c" ex="true" overriding="false">
       </item>
     </conf>

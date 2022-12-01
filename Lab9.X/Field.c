@@ -222,26 +222,26 @@ SquareStatus FieldRegisterEnemyAttack(Field *own_field, GuessData *opp_guess){
         case FIELD_SQUARE_SMALL_BOAT:
             own_field->smallBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = FIELD_SQUARE_HIT;
+            opp_guess->result = RESULT_HIT;
             break;
         case FIELD_SQUARE_MEDIUM_BOAT:
             own_field->mediumBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = FIELD_SQUARE_HIT;
+            opp_guess->result = RESULT_HIT;
             break;
         case FIELD_SQUARE_LARGE_BOAT:
             own_field->largeBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = FIELD_SQUARE_HIT;
+            opp_guess->result = RESULT_HIT;
             break;
         case FIELD_SQUARE_HUGE_BOAT:
             own_field->hugeBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = FIELD_SQUARE_HIT;
+            opp_guess->result = RESULT_HIT;
             break;
         default:
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_MISS);
-            opp_guess->result = FIELD_SQUARE_MISS;
+            opp_guess->result = RESULT_MISS;
             
     }
     return returnVar;

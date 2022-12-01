@@ -18,13 +18,102 @@ int main(void){
     
     testMessage = AgentRun(testEvent);
     
-    if(AgentGetState() == AGENT_STATE_CHALLENGING){
+    printf("\n\nTESTING AGENT STATE MACHINE:\n\n");
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    if(AgentGetState() == AGENT_STATE_CHALLENGING && testMessage.type == MESSAGE_CHA){
         printf("PASSED\n");
         
     }
     else{
         printf("FAILED\n");
     }
+    
+    testState = AGENT_STATE_START;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_CHA_RECEIVED;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    if(AgentGetState() == AGENT_STATE_ACCEPTING && testMessage.type == MESSAGE_ACC){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+    
+    testState =  AGENT_STATE_CHALLENGING;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_ACC_RECEIVED;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    
+     if(AgentGetState() == AGENT_STATE_DEFENDING || AgentGetState() == AGENT_STATE_WAITING_TO_SEND && testMessage.type == MESSAGE_REV){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+    
+    testState =  AGENT_STATE_ACCEPTING;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_REV_RECEIVED;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    
+     if(AgentGetState() == AGENT_STATE_ATTACKING && testMessage.type == MESSAGE_SHO){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+    
+    testState =  AGENT_STATE_ATTACKING;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_RES_RECEIVED;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    
+     if(AgentGetState() == AGENT_STATE_DEFENDING && testMessage.type == MESSAGE_NONE){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+    
+    testState =  AGENT_STATE_DEFENDING;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_SHO_RECEIVED;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    
+     if(AgentGetState() == AGENT_STATE_WAITING_TO_SEND && testMessage.type == MESSAGE_RES){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+    
+    testState = AGENT_STATE_WAITING_TO_SEND;
+    AgentSetState(testState);
+    testEvent.type = BB_EVENT_MESSAGE_SENT;
+    testMessage = AgentRun(testEvent);
+    
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    
+     if(AgentGetState() == AGENT_STATE_ATTACKING && testMessage.type == MESSAGE_SHO){
+        printf("Passed.\n");
+    }
+    else{
+        printf("Failed.\n");
+    }
+
+    
+    
     while(1);
     return 0;
 }

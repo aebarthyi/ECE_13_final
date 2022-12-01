@@ -72,7 +72,7 @@ Message AgentRun(BB_Event event){
                 agentState.secret_b = rand();
                 
                 message.type = MESSAGE_ACC; 
-                message.type = agentState.secret_b;
+                message.param0 = agentState.secret_b;
                 Message_Encode(messageString, message);
                 
                 Uart1WriteData(messageString, strlen(messageString));
@@ -85,7 +85,7 @@ Message AgentRun(BB_Event event){
         case AGENT_STATE_CHALLENGING:{
             if(event.type == BB_EVENT_ACC_RECEIVED){
                 message.type = MESSAGE_REV;
-                message.type = agentState.secret_a;
+                message.param0 = agentState.secret_a;
                 Message_Encode(messageString, message);
                 //SEND REV
                 
@@ -110,6 +110,7 @@ Message AgentRun(BB_Event event){
                 else if(NegotiateCoinFlip(agentState.secret_a, agentState.secret_b) == TAILS){
                     
                     message.type = MESSAGE_SHO; 
+                    //set guess here 
                     message.param0 = agentState.own_guess.row;
                     message.param1 = agentState.own_guess.col;
                     Message_Encode(messageString, message);
