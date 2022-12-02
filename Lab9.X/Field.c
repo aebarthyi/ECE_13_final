@@ -171,23 +171,54 @@ uint8_t FieldAddBoat(Field *own_field, uint8_t row, uint8_t col, BoatDirection d
     
         if(dir == FIELD_DIR_SOUTH){
             if(row + addBoatSize < FIELD_ROWS){
-                int i;
-                for(i = 0; i < addBoatSize + 1; i++){
-                    own_field->grid[row + i][col] = currentStatus;
+                int dog;
+                int spot = 0;
+                for(dog = 0; dog < addBoatSize + 1; dog++){
+                    if(FieldGetSquareStatus(own_field, row + dog, col) == FIELD_SQUARE_EMPTY){
+                        spot += 0;
+                    }
+                    else{
+                        spot += 1;
+                    }
                 }
-                goto lives;
+                if(spot == 0){
+                    int i;
+                    for(i = 0; i < addBoatSize + 1; i++){
+                        own_field->grid[row + i][col] = currentStatus;
+                    }
+                    goto lives;
+                }
+                else{
+                    return STANDARD_ERROR;
+                }
+                
             }
             else{
                 return STANDARD_ERROR;
             }
         }
         else{
-            if(col + addBoatSize < FIELD_COLS){
-                int l;
-                for(l = 0; l < addBoatSize + 1; l++){
-                    own_field->grid[row][col + l] = currentStatus;
+            if(row + addBoatSize < FIELD_COLS){
+                int iter;
+                int slate = 0;
+                for(iter = 0; iter < addBoatSize + 1; iter++){
+                    if(FieldGetSquareStatus(own_field, row, col + iter) == FIELD_SQUARE_EMPTY){
+                        slate += 0;
+                    }
+                    else{
+                        slate += 1;
+                    }
                 }
-                goto lives;
+                if(slate == 0){
+                    int d;
+                    for(d = 0; d < addBoatSize + 1; d++){
+                        own_field->grid[row][col + d] = currentStatus;
+                    }
+                    goto lives;
+                }
+                else{
+                    return STANDARD_ERROR;
+                }
             }
             else{
                 return STANDARD_ERROR;
@@ -222,22 +253,42 @@ SquareStatus FieldRegisterEnemyAttack(Field *own_field, GuessData *opp_guess){
         case FIELD_SQUARE_SMALL_BOAT:
             own_field->smallBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = RESULT_HIT;
+            if(own_field->smallBoatLives == 0){
+                opp_guess->result = RESULT_SMALL_BOAT_SUNK;
+            }
+            else{
+                opp_guess->result = RESULT_HIT;  
+            }
             break;
         case FIELD_SQUARE_MEDIUM_BOAT:
             own_field->mediumBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = RESULT_HIT;
+            if(own_field->mediumBoatLives == 0){
+                opp_guess->result = RESULT_MEDIUM_BOAT_SUNK;
+            }
+            else{
+                opp_guess->result = RESULT_HIT;  
+            }
             break;
         case FIELD_SQUARE_LARGE_BOAT:
             own_field->largeBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = RESULT_HIT;
+            if(own_field->largeBoatLives == 0){
+                opp_guess->result = RESULT_LARGE_BOAT_SUNK;
+            }
+            else{
+                opp_guess->result = RESULT_HIT;  
+            }
             break;
         case FIELD_SQUARE_HUGE_BOAT:
             own_field->hugeBoatLives--;
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_HIT);
-            opp_guess->result = RESULT_HIT;
+            if(own_field->hugeBoatLives == 0){
+                opp_guess->result = RESULT_HUGE_BOAT_SUNK;
+            }
+            else{
+                opp_guess->result = RESULT_HIT;  
+            }
             break;
         default:
             FieldSetSquareStatus(own_field, opp_guess->row, opp_guess->col, FIELD_SQUARE_MISS);

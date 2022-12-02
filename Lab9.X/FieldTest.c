@@ -5,7 +5,7 @@
 
 Field *myField, *oponentField, field1, field2;
 GuessData *enemyGuess, guess1, *enemyGuess2, guess2;
-GuessData *myGuess, myguess1, *myGuess2, myguess2;
+GuessData *myGuess, myguess1, *myGuess2, myguess2, *myGuessA, myguessa, *myGuessB, myguessb, *myGuessC, myguessc;
 
 
 int main(void){
@@ -79,6 +79,27 @@ int main(void){
     else{
         printf("Test Failed.\n");
     }
+    
+    FieldPrint_UART(myField, oponentField);
+    uint8_t addObsticle = FieldAddBoat(myField, 1, 1, FIELD_DIR_SOUTH, FIELD_BOAT_TYPE_MEDIUM);
+    
+    if(addObsticle == STANDARD_ERROR){
+        printf("Test Passed.\n");
+    }
+    else{
+        printf("Test Failed.\n");
+        
+    }
+    
+    uint8_t addObsticle2 = FieldAddBoat(myField, 2, 0, FIELD_DIR_EAST, FIELD_BOAT_TYPE_LARGE);
+    if(addObsticle2 == STANDARD_ERROR){
+        printf("Test Passed.\n");
+    }
+    else{
+        printf("Test Failed.\n");
+        
+    }
+    
     uint8_t errorReading = FieldAddBoat(myField, 3, 1, FIELD_DIR_SOUTH, FIELD_BOAT_TYPE_HUGE);
     if(errorReading == STANDARD_ERROR){
         printf("Test Passed.\n");
@@ -91,6 +112,17 @@ int main(void){
     
     enemyGuess = &guess1;
     enemyGuess2 = &guess2;
+    
+    myGuessA = &myguessa;
+    myGuessB = &myguessb;
+    myGuessC = &myguessc;
+    
+    myGuessA->row = 3;
+    myGuessA->col = 1;
+    myGuessB->row = 4;
+    myGuessB->col = 1;
+    myGuessC->row = 5;
+    myGuessC->col = 1;
     enemyGuess->col = 1;
     enemyGuess->row = 2;
     
@@ -115,8 +147,22 @@ int main(void){
     }
     else{
         printf("Test Failed.\n");
+      
     }
+    FieldRegisterEnemyAttack(myField, myGuessA);
+    FieldRegisterEnemyAttack(myField, myGuessB);
+    FieldRegisterEnemyAttack(myField, myGuessC);
     
+    if(myGuessC->result == RESULT_SMALL_BOAT_SUNK){
+        printf("Test Passed.\n");
+    }
+    else{
+        printf("Test Failed.\n");
+    }
+    FieldPrint_UART(myField, oponentField);
+    
+    
+    /*
     printf("Testing out FieldUpdateKnowledge().\n");
     myGuess = &myguess1;
     myGuess2 = &myguess2;
@@ -168,7 +214,7 @@ int main(void){
     FieldAIPlaceAllBoats(myField);
     FieldPrint_UART(myField, oponentField);
    
-    printf("%u", myField->smallBoatLives);
+   
     
    
     
@@ -181,6 +227,6 @@ int main(void){
     
     
     
-  
+*/
     
 }
