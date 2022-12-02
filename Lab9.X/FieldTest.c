@@ -153,16 +153,15 @@ int main(void){
     FieldRegisterEnemyAttack(myField, myGuessB);
     FieldRegisterEnemyAttack(myField, myGuessC);
     
-    if(myGuessC->result == RESULT_SMALL_BOAT_SUNK){
+    if(myGuessC->result == RESULT_SMALL_BOAT_SUNK && myField->smallBoatLives == 0){
         printf("Test Passed.\n");
     }
     else{
         printf("Test Failed.\n");
     }
-    FieldPrint_UART(myField, oponentField);
+
     
-    
-    /*
+
     printf("Testing out FieldUpdateKnowledge().\n");
     myGuess = &myguess1;
     myGuess2 = &myguess2;
@@ -188,6 +187,7 @@ int main(void){
         printf("Test Passed.\n");
     }
     
+    
     printf("Testing out FieldGetBoatStates().\n");
  
     uint8_t boatStatus = FieldGetBoatStates(myField);
@@ -211,6 +211,9 @@ int main(void){
     FieldPrint_UART(myField, oponentField);
     
     FieldInit(myField, oponentField);
+    
+    
+    
     FieldAIPlaceAllBoats(myField);
     FieldPrint_UART(myField, oponentField);
    
@@ -227,6 +230,6 @@ int main(void){
     
     
     
-*/
+
     
 }

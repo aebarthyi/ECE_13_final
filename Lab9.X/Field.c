@@ -119,6 +119,10 @@ void FieldInit(Field *own_field, Field *opp_field){
             opp_field->grid[i][j] = FIELD_SQUARE_UNKNOWN;
         }    
     }
+    own_field->hugeBoatLives = 0;
+    own_field->largeBoatLives = 0;
+    own_field->mediumBoatLives = 0;
+    own_field->smallBoatLives = 0;
     
     opp_field->hugeBoatLives = FIELD_BOAT_SIZE_HUGE;
     opp_field->largeBoatLives = FIELD_BOAT_SIZE_LARGE;
@@ -352,32 +356,31 @@ uint8_t FieldGetBoatStates(const Field *f){
 }
 
 uint8_t FieldAIPlaceAllBoats(Field *own_field){
-    int smallBoat = 1, sBoat = 0, mediumBoat = 1, mBoat = 1, largeBoat = 1, lBoat = 2, hugeBoat = 1, hBoat = 3;
+    int sBoat = 0, mBoat = 1, lBoat = 2, hBoat = 3;
     int randomGen, randomRow, randomCol;
     BoatType currentBoatType;
     BoatSize currentBoatSize;
-    srand(5);
+    srand(rand() + 542);
    
-    while(smallBoat + mediumBoat + largeBoat + hugeBoat > 0){
-        if((rand() % 4) == sBoat && smallBoat != 0){
+    while(FieldGetBoatStates(own_field) != (0x0F)){
+        if((rand() % 4) == sBoat && own_field->smallBoatLives == 0){
             currentBoatType = FIELD_BOAT_TYPE_SMALL;
-            currentBoatSize = FIELD_BOAT_SIZE_SMALL;
-            smallBoat = 0;
+            currentBoatSize = FIELD_BOAT_SIZE_SMALL - 1;
         }
-        else if((rand() % 4) == mBoat && mediumBoat != 0){
+        else if((rand() % 4) == mBoat && own_field->mediumBoatLives == 0){
             currentBoatType = FIELD_BOAT_TYPE_MEDIUM;
-            currentBoatSize = FIELD_BOAT_SIZE_MEDIUM;
-            mediumBoat = 0;
+            currentBoatSize = FIELD_BOAT_SIZE_MEDIUM - 1;
         }
-        else if((rand() % 4) == lBoat && largeBoat != 0){
+        else if((rand() % 4) == lBoat && own_field->largeBoatLives == 0){
             currentBoatType = FIELD_BOAT_TYPE_LARGE;
-            currentBoatSize = FIELD_BOAT_SIZE_LARGE;
-            largeBoat = 0;
+            currentBoatSize = FIELD_BOAT_SIZE_LARGE - 1;
         }
-        else if((rand() % 4) == hBoat && hugeBoat != 0){
+        else if((rand() % 4) == hBoat && own_field->hugeBoatLives == 0){
             currentBoatType = FIELD_BOAT_TYPE_HUGE;
-            currentBoatSize = FIELD_BOAT_SIZE_HUGE;
-            hugeBoat = 0;
+            currentBoatSize = FIELD_BOAT_SIZE_HUGE - 1;
+        }
+        else{
+            continue;
         }
         while(1){
             randomRow = rand() % 6;
@@ -401,21 +404,38 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
               continue;  
             }
             else if(southAvail == TRUE && eastAvail == FALSE){
-                FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
-                break;
+                if(FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType) == SUCCESS){
+                    break;
+                }
+                else{
+                    continue;
+                }
+                
             }
             else if(southAvail == FALSE && eastAvail == TRUE){
-                FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType);
-                break;
+                if(FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType) == SUCCESS){
+                    break;
+                }
+                else{
+                    continue;
+                }
+                
             }
             else if(southAvail == TRUE && eastAvail == TRUE){
                 if((rand() & (0x01)) == 1){
-                    FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType);
+                    if(FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_SOUTH, currentBoatType) == SUCCESS){
+                    break;
                 }
                 else{
-                    FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType);
+                    if(FieldAddBoat(own_field, randomRow, randomCol, FIELD_DIR_EAST, currentBoatType) == SUCCESS){
+                        break;
+                    }
+                    else{
+                        continue;
+                    }
                 }
-                break;
+                }
+                
             }
             
         }
