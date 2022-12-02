@@ -445,7 +445,27 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
      
      
 }
-    
+
+
+GuessData FieldAIDecideGuess(const Field *opp_field){
+    GuessData returnStruct;
+    int randomRow, randomCol;
+    srand(rand() + 32);
+
+    while(1){
+        randomRow = rand() % 6;
+        randomCol = rand() % 10;
+        if(FieldGetSquareStatus(opp_field, randomRow, randomCol) == FIELD_SQUARE_UNKNOWN){
+            returnStruct.row = randomRow;
+            returnStruct.col = randomCol;
+            break;
+        }
+        else{
+            continue;
+        }
+    }
+    return returnStruct;
+}
   
         
    
