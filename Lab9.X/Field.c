@@ -448,7 +448,7 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
 
 
 GuessData FieldAIDecideGuess(const Field *opp_field){
-    GuessData returnStruct;
+    static GuessData returnStruct;
     int randomRow, randomCol;
     srand(rand() + 32);
 

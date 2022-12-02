@@ -5,7 +5,7 @@
 
 Field *myField, *oponentField, field1, field2;
 GuessData *enemyGuess, guess1, *enemyGuess2, guess2;
-GuessData *myGuess, myguess1, *myGuess2, myguess2, *myGuessA, myguessa, *myGuessB, myguessb, *myGuessC, myguessc;
+GuessData *myGuess, myguess1, *myGuess2, myguess2, *myGuessA, myguessa, *myGuessB, myguessb, *myGuessC, myguessc, *generatedGuess, generatedguess;
 
 
 int main(void){
@@ -212,9 +212,8 @@ int main(void){
     
     FieldInit(myField, oponentField);
     
-    
-    
     FieldAIPlaceAllBoats(myField);
+
     FieldPrint_UART(myField, oponentField);
    
    
