@@ -1,6 +1,7 @@
 #include "Agent.h"
 #include "Field.h"
 #include "Negotiation.h"
+#include "FieldOled.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,10 @@
 typedef struct { //agent struct to track state of the agent
     AgentState state;
     int turnCounter;
+    int cursorRow;
+    int cursorCol;
+    uint8_t boatType;
+    BoatDirection dir;
     Field myField;
     Field oppField;
     NegotiationData secret_a;
@@ -31,6 +36,10 @@ static Agent agentState; //static module level struct to hold persistent data
 void AgentInit(void){
     agentState.state = AGENT_STATE_START;
     agentState.turnCounter = 0;
+    agentState.cursorRow = 0;
+    agentState.cursorCol = 0;
+    agentState.dir = FIELD_DIR_EAST;
+    agentState.boatType = 0;
 }
 
 /**
@@ -51,15 +60,18 @@ Message AgentRun(BB_Event event){
     switch(agentState.state){
         case AGENT_STATE_START:{
             if(event.type == BB_EVENT_START_BUTTON){
-                agentState.state = AGENT_STATE_CHALLENGING;
                 FieldInit(&agentState.myField, &agentState.oppField);
                 agentState.secret_a = rand();
                 agentState.hash_a = NegotiationHash(agentState.secret_a);
                 
-                message.type = MESSAGE_CHA;
-                message.param0 = agentState.hash_a;
-                Message_Encode(messageString, message);
-                
+                if(agentState.boatType > 3){
+                    message.type = MESSAGE_CHA;
+                    message.param0 = agentState.hash_a;
+                    Message_Encode(messageString, message);
+                    agentState.state = AGENT_STATE_CHALLENGING;
+                }else{
+                    agentState.dir = !agentState.dir;
+                }
                 //place boats
             }
             else if(event.type == BB_EVENT_CHA_RECEIVED){
@@ -71,9 +83,19 @@ Message AgentRun(BB_Event event){
                 message.param0 = agentState.secret_b;
                 Message_Encode(messageString, message);
             }
-            else if(event.type == BB_EVENT_RESET_BUTTON)
-                agentState.state = AGENT_STATE_START;
+            else if(event.type == BB_EVENT_SOUTH_BUTTON){
+                agentState.cursorRow= (agentState.cursorRow+1) % FIELD_ROWS;
+            }
+            else if(event.type == BB_EVENT_EAST_BUTTON){
+                agentState.cursorCol= (agentState.cursorCol+1) % FIELD_COLS;
+            }
+            else if(event.type == BB_EVENT_RESET_BUTTON){
+                agentState.boatType++;
             //DO other things here like generate the message
+            }
+            //this is all broken rn
+            FieldAddBoat(&agentState.myField, agentState.cursorRow, agentState.cursorCol, agentState.dir, agentState.boatType);
+            FieldOledDrawScreen(&agentState.myField, NULL, FIELD_OLED_TURN_NONE, agentState.turnCounter);
             break;
         }
         case AGENT_STATE_CHALLENGING:{
@@ -126,6 +148,8 @@ Message AgentRun(BB_Event event){
             }
             else if(event.type == BB_EVENT_RESET_BUTTON)
                 agentState.state = AGENT_STATE_START;
+            
+            FieldOledDrawScreen(&agentState.myField, &agentState.oppField, FIELD_OLED_TURN_MINE, agentState.turnCounter);
             break;
         }
         case AGENT_STATE_DEFENDING:{
@@ -144,12 +168,14 @@ Message AgentRun(BB_Event event){
             }
             else if(event.type == BB_EVENT_RESET_BUTTON)
                 agentState.state = AGENT_STATE_START;
+            FieldOledDrawScreen(&agentState.myField, &agentState.oppField, FIELD_OLED_TURN_THEIRS, agentState.turnCounter);
             break;
         }
         case AGENT_STATE_WAITING_TO_SEND:{
             if(event.type == BB_EVENT_MESSAGE_SENT){
                 agentState.state = AGENT_STATE_ATTACKING;
                 agentState.turnCounter++;
+                FieldOledDrawScreen(&agentState.myField, &agentState.oppField, FIELD_OLED_TURN_MINE, agentState.turnCounter);
                 //decide guess
                 //send SHO
                 message.type = MESSAGE_SHO; 
@@ -165,6 +191,10 @@ Message AgentRun(BB_Event event){
         case AGENT_STATE_END_SCREEN:{
             //end state game screen
             
+            break;
+        }
+        default:{
+            agentState.state = AGENT_STATE_START;
             break;
         }
     }

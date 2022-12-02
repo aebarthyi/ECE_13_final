@@ -68,9 +68,6 @@ int Message_ParseMessage(const char* payload,
     char copy_of_payload[MESSAGE_MAX_PAYLOAD_LEN] = {0};
     strncpy(copy_of_payload, payload, MESSAGE_MAX_PAYLOAD_LEN);
     char * messageId = strtok(copy_of_payload, DATA_DELIMITER);
-    message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
-    message_event->param1 = atoi(strtok(NULL, DATA_DELIMITER));
-    message_event->param2 = atoi(strtok(NULL, DATA_DELIMITER));
     uint8_t checksumFromMessage = strtol(checksum_string, NULL, 16);
     uint8_t checksumCalculated = Message_CalculateChecksum(payload);
     if(checksumFromMessage != checksumCalculated){
@@ -80,18 +77,26 @@ int Message_ParseMessage(const char* payload,
     else{
         if(!strcmp(messageId, "CHA")){
             message_event->type = BB_EVENT_CHA_RECEIVED;
+            message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
         }
         else if(!strcmp(messageId, "ACC")){
             message_event->type = BB_EVENT_ACC_RECEIVED;
+            message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
         }
         else if(!strcmp(messageId, "REV")){
             message_event->type = BB_EVENT_REV_RECEIVED;
+            message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
         }
         else if(!strcmp(messageId, "SHO")){
             message_event->type = BB_EVENT_SHO_RECEIVED;
+            message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
+            message_event->param1 = atoi(strtok(NULL, DATA_DELIMITER));
         }
         else if(!strcmp(messageId, "RES")){
             message_event->type = BB_EVENT_RES_RECEIVED;
+            message_event->param0 = atoi(strtok(NULL, DATA_DELIMITER));
+            message_event->param1 = atoi(strtok(NULL, DATA_DELIMITER));
+            message_event->param2 = atoi(strtok(NULL, DATA_DELIMITER));
         }
         else{
             message_event->type = BB_EVENT_ERROR;
@@ -146,6 +151,8 @@ int Message_Encode(char *message_string, Message message_to_encode){
         case MESSAGE_NONE:{
             return 0;
         }
+        default:
+            break;
     }
     strcat(message_string, payload);
     messageIndex = strlen(message_string);
@@ -210,7 +217,6 @@ int Message_Decode(unsigned char char_in, BB_Event * decoded_message_event){
         }
         case DECODE_RECORDING_CHECKSUM:{
             if(char_in == END_DELIMITER){
-                printf("PAYLOAD: %s\n CHECKSUM: %s\n", decodeStatus.payload, decodeStatus.checksum);
                 return Message_ParseMessage(decodeStatus.payload, decodeStatus.checksum, decoded_message_event);
             }
             else if((char_in > 47 && char_in < 58) || (char_in > 64 && char_in < 71)){
