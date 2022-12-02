@@ -1,7 +1,6 @@
 #include "Agent.h"
 #include "Field.h"
 #include "Negotiation.h"
-#include "Uart1.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -63,7 +62,6 @@ Message AgentRun(BB_Event event){
                 Message_Encode(messageString, message);
                 
                 //place boats
-                Uart1WriteData(messageString, strlen(messageString));
             }
             else if(event.type == BB_EVENT_CHA_RECEIVED){
                 agentState.state = AGENT_STATE_ACCEPTING;
@@ -74,8 +72,6 @@ Message AgentRun(BB_Event event){
                 message.type = MESSAGE_ACC; 
                 message.param0 = agentState.secret_b;
                 Message_Encode(messageString, message);
-                
-                Uart1WriteData(messageString, strlen(messageString));
             }
             else if(event.type == BB_EVENT_RESET_BUTTON)
                 agentState.state = AGENT_STATE_START;
@@ -94,8 +90,6 @@ Message AgentRun(BB_Event event){
                 }
                 else
                     agentState.state = AGENT_STATE_DEFENDING;
-                
-                Uart1WriteData(messageString, strlen(messageString));
             }
             else if(event.type == BB_EVENT_RESET_BUTTON)
                 agentState.state = AGENT_STATE_START;
@@ -115,7 +109,7 @@ Message AgentRun(BB_Event event){
                     message.param1 = agentState.own_guess.col;
                     Message_Encode(messageString, message);
                     agentState.state = AGENT_STATE_ATTACKING;
-                    Uart1WriteData(messageString, strlen(messageString));
+                    
                 }
                 else
                     agentState.state = AGENT_STATE_END_SCREEN;
@@ -145,7 +139,6 @@ Message AgentRun(BB_Event event){
                 message.param1 = agentState.opp_guess.col;
                 message.param2 = agentState.opp_guess.result;
                 Message_Encode(messageString, message);
-                Uart1WriteData(messageString, strlen(messageString));
                 
                 //check for victory 
                 
@@ -165,7 +158,7 @@ Message AgentRun(BB_Event event){
                 message.param0 = agentState.own_guess.row;
                 message.param1 = agentState.own_guess.col;
                 Message_Encode(messageString, message);
-                Uart1WriteData(messageString, strlen(messageString));
+                
             }
             else if(event.type == BB_EVENT_RESET_BUTTON)
                 agentState.state = AGENT_STATE_START;

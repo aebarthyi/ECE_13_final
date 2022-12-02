@@ -49,7 +49,7 @@ int main(void){
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
     
-     if(AgentGetState() == AGENT_STATE_DEFENDING || AgentGetState() == AGENT_STATE_WAITING_TO_SEND && testMessage.type == MESSAGE_REV){
+     if((AgentGetState() == AGENT_STATE_DEFENDING || AgentGetState() == AGENT_STATE_WAITING_TO_SEND) && testMessage.type == MESSAGE_REV){
         printf("Passed.\n");
     }
     else{
