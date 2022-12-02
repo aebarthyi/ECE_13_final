@@ -53,7 +53,6 @@ Message AgentRun(BB_Event event){
             if(event.type == BB_EVENT_START_BUTTON){
                 agentState.state = AGENT_STATE_CHALLENGING;
                 FieldInit(&agentState.myField, &agentState.oppField);
-                srand(time(NULL));
                 agentState.secret_a = rand();
                 agentState.hash_a = NegotiationHash(agentState.secret_a);
                 
@@ -66,7 +65,6 @@ Message AgentRun(BB_Event event){
             else if(event.type == BB_EVENT_CHA_RECEIVED){
                 agentState.state = AGENT_STATE_ACCEPTING;
                 FieldInit(&agentState.myField, &agentState.oppField);
-                srand(time(NULL));
                 agentState.secret_b = rand();
                 
                 message.type = MESSAGE_ACC; 
