@@ -27,7 +27,7 @@ NegotiationOutcome NegotiateCoinFlip(NegotiationData A, NegotiationData B){ // F
     xored = xored^(xored>>4);
     xored = xored^(xored>>8);
     
-    if(xored & 1 == 1){
+    if((xored & 1) == 1){
         return HEADS;
     }
     else{

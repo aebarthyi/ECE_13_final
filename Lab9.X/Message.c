@@ -124,7 +124,9 @@ int Message_ParseMessage(const char* payload,
  */
 int Message_Encode(char *message_string, Message message_to_encode){
     int messageIndex = 0;
-    message_string[messageIndex++] = START_DELIMITER;
+    for(int i = 0; i < MESSAGE_MAX_LEN; i++)
+        message_string[i] = '\0';
+    message_string[0] = START_DELIMITER;
     char payload[MESSAGE_MAX_PAYLOAD_LEN] = {0};
     char checksum[MESSAGE_CHECKSUM_LEN] = {0};
     switch(message_to_encode.type){
@@ -185,8 +187,11 @@ int Message_Decode(unsigned char char_in, BB_Event * decoded_message_event){
     switch(decodeStatus.decodeState){
         case DECODE_WAIT_FOR_START: {
             if(char_in == START_DELIMITER){
+                for(int i = 0; i < MESSAGE_MAX_PAYLOAD_LEN; i++)
+                    decodeStatus.payload[i] = '\0';
+                 for(int i = 0; i < MESSAGE_CHECKSUM_LEN; i++)
+                    decodeStatus.checksum[i] = '\0';
                 decodeStatus.decodeState = DECODE_RECORDING_PAYLOAD;
-                memset(decodeStatus.payload, 0, MESSAGE_MAX_PAYLOAD_LEN);
                 decodeStatus.payloadLength = 0;
                 decodeStatus.checksumLength = 0;
             }

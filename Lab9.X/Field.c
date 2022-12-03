@@ -357,7 +357,7 @@ uint8_t FieldGetBoatStates(const Field *f){
 
 uint8_t FieldAIPlaceAllBoats(Field *own_field){
     int sBoat = 0, mBoat = 1, lBoat = 2, hBoat = 3;
-    int randomGen, randomRow, randomCol;
+    int randomRow, randomCol;
     BoatType currentBoatType;
     BoatSize currentBoatSize;
     srand(rand() + 542);
@@ -443,7 +443,7 @@ uint8_t FieldAIPlaceAllBoats(Field *own_field){
     
     }
      
-     
+    return SUCCESS;
 }
 
 

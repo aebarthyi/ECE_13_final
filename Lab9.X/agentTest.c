@@ -5,9 +5,15 @@
 #include "Negotiation.h"
 #include "Field.h"
 
+void resetString(char * message){
+    for(int i = 0; i < MESSAGE_MAX_LEN; i++){
+        message[i] = 0;
+    }
+}
 
 int main(void){
-    Message testMessage;
+    Message testMessage;\
+    char messageString[MESSAGE_MAX_LEN] = {0};
     BB_Event testEvent = {BB_EVENT_NO_EVENT, 0,0,0};
     AgentState testState = AGENT_STATE_START;
     AgentInit();
@@ -21,6 +27,9 @@ int main(void){
     printf("\n\nTESTING AGENT STATE MACHINE:\n\n");
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
     if(AgentGetState() == AGENT_STATE_CHALLENGING && testMessage.type == MESSAGE_CHA){
         printf("PASSED\n");
         
@@ -34,7 +43,10 @@ int main(void){
     testEvent.type = BB_EVENT_CHA_RECEIVED;
     testMessage = AgentRun(testEvent);
     
-    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
+    printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);\
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
     if(AgentGetState() == AGENT_STATE_ACCEPTING && testMessage.type == MESSAGE_ACC){
         printf("Passed.\n");
     }
@@ -48,7 +60,9 @@ int main(void){
     testMessage = AgentRun(testEvent);
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
-    
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
      if((AgentGetState() == AGENT_STATE_DEFENDING || AgentGetState() == AGENT_STATE_WAITING_TO_SEND) && testMessage.type == MESSAGE_REV){
         printf("Passed.\n");
     }
@@ -62,7 +76,9 @@ int main(void){
     testMessage = AgentRun(testEvent);
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
-    
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
      if(AgentGetState() == AGENT_STATE_ATTACKING && testMessage.type == MESSAGE_SHO){
         printf("Passed.\n");
     }
@@ -76,7 +92,9 @@ int main(void){
     testMessage = AgentRun(testEvent);
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
-    
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
      if(AgentGetState() == AGENT_STATE_DEFENDING && testMessage.type == MESSAGE_NONE){
         printf("Passed.\n");
     }
@@ -90,7 +108,9 @@ int main(void){
     testMessage = AgentRun(testEvent);
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
-    
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
      if(AgentGetState() == AGENT_STATE_WAITING_TO_SEND && testMessage.type == MESSAGE_RES){
         printf("Passed.\n");
     }
@@ -104,7 +124,9 @@ int main(void){
     testMessage = AgentRun(testEvent);
     
     printf("MESSAGE_TYPE: %d\nMESSAGE_PARAM0: %d\nMESSAGE_PARAM1: %d\nMESSAGE_PARAM2: %d\n", testMessage.type, testMessage.param0, testMessage.param1, testMessage.param2);
-    
+    Message_Encode(messageString, testMessage);
+    printf("MESSAGE: %s\n", messageString);
+    resetString(messageString);
      if(AgentGetState() == AGENT_STATE_ATTACKING && testMessage.type == MESSAGE_SHO){
         printf("Passed.\n");
     }
